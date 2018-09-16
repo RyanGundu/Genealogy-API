@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Genealogy App</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="GEDCOM display">
+    <meta name="keywords" content="GEDCOM">
+    <meta name="author" content="Ryan Gundu">
+    <!-- Load jquery, bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" type="text/css" href="/style.css">
+    <link href="./style.css" rel="stylesheet">
+    <!-- Custom CSS End -->
+</head>
+
+    <header>
+        <div class="branch">
+            <img src="./images/tree2.png" class="vines">
+        </div>
+        <ul>
+            <li><img src="./images/tree1.png" class="icon"></li>
+            <li><h1>Genealogy App</h1></li>
+        </ul>
+        
+    </header>
+
+    <body>
+
+        <!-- The Modal -->
+        <div id="popUp" class="logInDB">
+
+          <!-- Modal content -->
+          <div class="modal-content">
+            <h2><u>Database Log In (Connection Required)</u></h2>
+
+            <div class="form-group">
+            *HOST:
+            <input class="form-control" placeholder="ex. dursley.socs.uoguelph.ca" name="host">
+            </div>
+            <div class="form-group">
+              *USERNAME:
+             <input class="form-control" placeholder="ex. rgundu" name="user">
+            </div>
+            <div class="form-group">
+              *PASSWORD:
+             <input class="form-control" placeholder="ex. 1234567" name="password">
+            </div>
+            <div class="form-group">
+              *DATABASE:
+            <input class="form-control" placeholder="ex. rgundu" name="db">
+            </div>
+
+          <div id="connectionStatus"><p>Could Not Connect. Try again.</p></div>
+          <button id="conDB" class="btn btn2 addInd btn-secondary" type="button">
+          CONNECT
+          </button>
+
+          </div>
+        </div>
+    
+        <div id="fileMenu" class="filePick">
+          <div class="modal-content filePicker">
+            <span class="exit">&times;</span>
+
+          </div>
+        </div>
+
+        <div id="helpMenu" class="help">
+          <div class="modal-content helper">
+            <span class="exit">&times;</span>
+            <div class="describeFile">
+              <h2><u>DESCRIBE FILE</u></h2>
+              <table class="table table-striped table-bordered table-hover table-condensed" id="helpDF"></table>
+            </div>
+            <div class="describeIndividual">
+              <h2><u>DESCRIBE INDIVIDUAL</u></h2>
+              <table class="table table-striped table-bordered table-hover table-condensed" id="helpDI"></table>
+            </div>
+
+          </div>
+        </div>
+
+
+        <div class="panel1" id="statBar">
+            <p id="target">Status:</p>
+        </div>
+        <div class="buttons">
+            <ul>
+                <li>
+                    <button class="btn btn1 btn-secondary" type="button" onclick="clearStatus()">
+                        CLEAR STATUS
+                    </button> 
+                </li>
+
+                <li>
+                  <form method="POST" enctype="multipart/form-data" action="/upload" onsubmit="return validate()">
+                        <label class="btn btn1 btn-primary" role="button">
+                            SELECT GEDCOM <input id="myFile" type="file" name="uploadFile" hidden>
+                        </label>
+                        <label class="btn btn1 btn-primary" role="button">
+                            UPLOAD <input type="submit" hidden>
+                        </label>
+                    </form>
+                </li>
+
+                <li>
+                    <button class="btn btn1 btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        DOWNLOAD GEDCOM
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="filesList">
+                        <!-- Files Should GO HERE -->
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-5 col1">
+                <h2>Gedcom View Panel</h2>
+                <button class="btn btn2 btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        SELECT FILE TO VIEW
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="listSelect">
+                    <!-- Files Should GO HERE -->
+                </div>
+                <div id="VPFile">No File Selected</div>
+                <hr>  
+                <div class="container1">
+                  <table class="table table-striped table-bordered table-hover table-condensed indDisplay">
+<!--                     <tr>
+                      <th>Firstname</th>
+                      <th>Lastname</th>
+                      <th>Sex</th>
+                      <th>Family Size</th>
+                    </tr> -->
+                  </table>
+                </div>
+
+            </div>
+            <div class="col-lg-5 col2 topRight">
+                <h2>Add Individual</h2>
+                <hr> 
+                <div class="display">
+
+                    <button class="btn btn2 btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        SELECT FILE
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="listSelect1">
+                        <!-- Files Should GO HERE -->
+                    </div>
+                    <div id="ADDFile">No File Selected</div>
+
+                    <form class="form-inline" id="addingInd">
+                          
+                         <div class="form-group">
+                          FIRST NAME:
+                           <input class="form-control" name="firstName" placeholder="First Name" maxlength="200">
+                         </div>
+                
+                         <div class="form-group">
+                          LAST NAME :
+                           <input class="form-control" name="lastName" placeholder="Last Name" maxlength="200">
+                         </div>
+                    </form>
+                    <button class="btn btn2 addInd btn-secondary" type="button" onclick="addInd()">
+                        ADD INDIVIDUAL
+                    </button>
+
+                </div>
+<!-- 
+                <h2>Display</h2>
+                <hr> 
+                <div class="lists">
+                    Ancestors of: Raj Gundu
+                    <ul>Riya Gundu</ul>
+                </div> -->
+            </div> 
+
+            <div class="col-lg-10 col3">     
+                <h2>File Log</h2>
+                <hr>  
+                <div class="container2">
+                  <table class="table table-striped table-bordered table-hover table-condensed fileLog" id="fLog">
+                    <tr class="stick">
+                      <th>File Name<br>(Click to download)</th>
+                      <th>Source</th>
+                      <th>GEDC<br>version</th>
+                      <th>Encoding</th>
+                      <th>Submitter<br>name</th>
+                      <th>Submitter<br>Address</th>
+                      <th>Number<br>of<br>individuals</th>
+                      <th>Number<br>of<br>families</th>
+                    </tr>
+                   <!--  File log info -->
+                  </table>
+                </div>
+            </div>
+        </div>
+        <div class="trees">
+            <ul>
+                <li>
+                    <div class="lists">
+                        <h2>Get Descendants</h2>
+                        <hr> 
+                        <div class="display2">
+                            <button class="btn btn2 btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                SELECT FILE
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="listSelect2">
+                                <!-- Files Should GO HERE -->
+                            </div>
+                            <div id="DECFile">No File Selected</div>
+
+                            <form class="form-inline">
+                                 <div class="form-group">
+                                   <input class="form-control" placeholder="First Name" name="firstName" maxlength="200">
+                                 </div>
+                                 <div class="form-group">
+                                   <input class="form-control" placeholder="Last Name" name="lastName" maxlength="200">
+                                 </div>
+                            </form>
+                            <div class="form-group">
+                                <input class="form-control" placeholder="Max Generation" name="maxGen" maxlength="15">
+                            </div>
+                            <button class="btn btn2 getDec btn-secondary" type="button" onclick="getDescendants()">
+                                GET DECENDANTS
+                            </button>
+                            <div class="decDisplay1">
+                                <table class="table table-striped table-bordered table-hover table-condensed decDisplay">
+                                <!-- DECENDANTS TABLE -->
+                              </table>
+                            </div>
+                            <hr>
+                        </div>
+
+                    </div>
+                </li>
+                <li>
+                    <div class="lists">
+                        <h2>Get Ancestors</h2>
+                        <hr> 
+                        <div class="display2">
+                            <button class="btn btn2 btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                SELECT FILE
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="listSelect3">
+                                <!-- Files Should GO HERE -->
+                            </div>
+                            <div id="ANCFile">No File Selected</div>
+
+                            <form class="form-inline">
+                                 <div class="form-group">
+                                   <input class="form-control" placeholder="First Name" name="firstName" maxlength="200">
+                                 </div>
+                                 <div class="form-group">
+                                   <input class="form-control" placeholder="Last Name" name="lastName" maxlength="200">
+                                 </div>
+                            </form>
+                            <div class="form-group">
+                                <input class="form-control" placeholder="Max Generation" name="maxGen" maxlength="15">
+                            </div>
+                            <button class="btn btn2 getAnc btn-secondary" type="button" onclick="getAncestors()">
+                                GET ANCESTORS
+                            </button>
+                            <div class="ancDisplay1">
+                                <table class="table table-striped table-bordered table-hover table-condensed ancDisplay">
+                               <!--  ANCESTORS TABLE -->
+                              </table>
+                            </div>
+                            <hr>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="col-lg-10 col3">     
+            <h2>Create simple GEDCOM</h2>
+            <hr>  
+            <div>
+              <table class="table table-striped table-bordered table-hover table-condensed">
+            <form class="form-inline" id="createGED">
+                 <div class="form-group">
+                    *FILE NAME:
+                   <input class="form-control" placeholder="File Name (.ged)" name="fileName" maxlength="200">
+                 </div>
+                 <div class="form-group">
+                    *SOURCE: (Max: 249 characters)
+                   <input class="form-control" placeholder="Source" name="source" maxlength="249">
+                 </div>
+                 <div class="form-group">
+                    *ENCODING: (ANSEL, UTF8, UNICODE, ASCII)
+                   <input class="form-control" placeholder="ANSEL, UTF8, UNICODE, ASCII" name="enc" maxlength="7">
+                 </div>
+                 <div class="form-group">
+                    *SUBMITTER NAME: (Max: 61 characters)
+                   <input class="form-control" placeholder="Submitter Name" name="subName" maxlength="61">
+                 </div>
+                 <div class="form-group">
+                    SUBMITTER ADDRESS: (Max: 500 characters)
+                   <input class="form-control" placeholder="Submitter Address (Optional)" name="subAddress" maxlength="500">
+                 </div>
+            </form>
+             <button class="btn btn2 btn-secondary" type="button" onclick="createGEDCOM()">
+                CREATE GEDCOM
+            </button>
+      
+            </div>
+            <hr> 
+            <div class="dBase">
+              <h2>Database</h2>
+              <hr>
+              <ul>
+                <li>
+                  <button id="storeData" class="btn btn2 btn-secondary" type="button" onclick="storeFiles(0)">
+                    Store All Files
+                  </button>
+                </li>
+                <li>
+                  <button class="btn btn2 btn-secondary" type="button" onclick="clearData()">
+                    Clear All Data
+                  </button>
+                </li>
+                <li>
+                  <button class="btn btn2 btn-secondary" type="button" onclick="getDBS()">
+                    Display DB Status
+                  </button>
+                </li>
+              </ul>
+
+              <ul>
+                <li>
+                  <button class="btn btn2 btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Execute Query
+                  </button>
+                  <div class="dropdown-menu multi-level" aria-labelledby="dropdownMenuButton" id="queryPick">
+                      <a class="dropdown-item" onclick="personalQuery(1)">Individuals Sorted by Last Name</a>
+                      <a class="dropdown-item" onclick="fileSelect()">Display Individuals From a File</a>
+                      <a class="dropdown-item" onclick="personalQuery(2)">Individuals Sorted by First Name</a>
+                      <a class="dropdown-item" onclick="personalQuery(3)">Individuals Sorted by Family Size</a>
+                      <a class="dropdown-item" onclick="personalQuery(4)">Individuals Split by Gender</a>
+                      <a class="dropdown-item" onclick="personalQuery(5)">Display FILE table</a>
+                  </div>
+                </li>
+
+                <li> </li>
+                <li> </li>
+                <li> </li>
+
+                <li>OR</li>
+
+                <li> </li>
+                <li> </li>
+                <li> </li>
+                
+                <li>
+                  <div class="form-group">
+                    <label for='personalSelect'>SELECT 
+                       <input type="text" id='personalSelect' value=""/>
+                    </label>
+                 </div>
+                </li>
+                <li>
+                  <button class="btn btn2 btn-secondary" type="button" onclick="personalQuery(0)">
+                    SUBMIT
+                  </button>
+                </li>
+
+                <li> </li>
+                <li> </li>
+                <li> </li>
+                <li> </li>
+                <li> </li>
+                <li> </li>
+
+                <li>
+                  <button class="btn btn2 btn-secondary" type="button" onclick="displayHelp()">
+                    HELP
+                  </button>
+                </li>
+              </ul>
+
+              <div class="results">
+                <h3>Results</h3>
+                <p class="tableType"></p>
+                <div class="resultPanel">
+
+                  
+                </div>
+              </div>
+
+            </div>
+        </div>
+        <hr>
+
+        <!-- Leave me at the bottom of body -->
+        <script src="./index.js"></script>
+        <script src="/index.js"></script>
+
+    </body>
+
+</html>
+
+
+
+
+
+
+

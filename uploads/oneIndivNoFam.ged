@@ -1,0 +1,27 @@
+0 HEAD
+1 SOUR PAF
+1 GEDC
+2 VERS 5.50
+2 FORM LINEAGE-LINKED
+1 CHAR ASCII
+1 SUBM @SUB1@
+0 @SUB1@ SUBM
+1 NAME Submitter
+0 @I04@ INDI
+1 NAME bob /smith/
+2 GIVN bob
+2 SURN smith
+0 @I03@ INDI
+1 NAME binladin /asnal/
+2 GIVN binladin
+2 SURN asnal
+0 @I02@ INDI
+1 NAME Kuki /Gundu/
+2 GIVN Kuki
+2 SURN Gundu
+0 @I01@ INDI
+1 NAME John /Smith/
+2 GIVN John
+2 SURN Smith
+1 SEX M
+0 TRLR
